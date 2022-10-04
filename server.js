@@ -1,28 +1,25 @@
 const express = require('express')
 const app = express()
 const port = 8080
-app.get('/', (req, res) => {
+const Figma = require('figma-api')
+
+app.get('/', async (req, res) => {
   res.send('home page')
-  var audioconcat = require('audioconcat')
 
-  var songs = [
-    'owlman 1.mp3',
-    'owlman 2.mp3'
-  ]
+  const api = new Figma.Api({
+    personalAccessToken: 'figd_UsREOHqqkYNait67Zyol9wPqPWTjm4ROhUckj5II',
+  });
 
-  audioconcat(songs)
-    .concat('owlmanConcat.mp3')
-    .on('start', function (command) {
-      console.log('ffmpeg process started:', command)
-    })
-    .on('error', function (err, stdout, stderr) {
-      console.error('Error:', err)
-      console.error('ffmpeg stderr:', stderr)
-    })
-    .on('end', function (output) {
-      console.error('Audio created in:', output)
-    })
+  const fileKey = 'MSwrSBSUwKrYwy6obIDyXo' // id is '1:3'
+  // const fileKey = 'ud4VZrnhqpFiNjqBvbSX6q' // id is '0:1'
+  const file = await api.getImage(fileKey, { ids: '0:1', format: 'svg' })
+  // ... access file data ...
+  console.debug(file)
+
+  console.log('done getting file')
 })
+
+
 app.listen(port, () => {
   console.log('server started on port ', port)
 })
